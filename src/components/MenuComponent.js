@@ -16,7 +16,7 @@ function RenderMenuItem ({dish, onClick}) {
             </Link>
         </Card>
     );
-}  
+}
 
     
         const Menu = (props) => {
@@ -47,6 +47,6 @@ function RenderMenuItem ({dish, onClick}) {
                 </div>
             </div>
         );
-    }
+        }
 
 export default Menu;
