@@ -214,6 +214,7 @@ class Contact extends Component {
                         value={this.state.message} onChange={this.HandelInputChange}></Input>
                     </Col>
                 </FormGroup>
+                
                
                 <FormGroup row>
                     <Col md={{size: 10 , offset: 2}}> 
