@@ -56,7 +56,7 @@ class Contact extends Component {
         });
     }
     
-    Validate(firstname, lastname, telnum, emial){
+    Validate(firstname, lastname, telnum, email){
 
         const errors = {
             firstname:'',
@@ -80,7 +80,7 @@ class Contact extends Component {
         if(this.state.touched.telnum && !reg.test(telnum))
         errors.telnum = 'Tel. numbers should contain onle numbers';
       
-        if(this.state.touched.email && emial.split('').filter(x => x === '@'.length !== 1))
+        if(this.state.touched.email && email.split('').filter(x => x === '@'.length !== 1))
         errors.email = 'Email should have @ sign'
 
         return errors;
@@ -178,9 +178,9 @@ class Contact extends Component {
                  </FormGroup>
 
                  <FormGroup row>
-                    <Label htmlFor="emial" md={2}>Email</Label>
+                    <Label htmlFor="email" md={2}>Email</Label>
                     <Col md={10}>
-                        <Input type="email" id="email" name="email" placeholder="Emial"
+                        <Input type="email" id="email" name="email" placeholder="Email"
                         value={this.state.email} 
                         valid={errors.email === ''}
                         invalid={errors.email !== ''}
