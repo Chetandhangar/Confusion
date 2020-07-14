@@ -38,7 +38,7 @@ class CommentForm extends Component{
             <Button  onClick={this.toggleModal}><span className="fa fa-edit fa-lg">Submit Comment</span></Button>
         
             <Modal isOpen={this.state.isModalOpen} toggle={this.toggleModal}>
-                <ModalHeader toggle={this.toggleModal}>Send Comment</ModalHeader>
+                <ModalHeader toggle={this.toggleModal}>Submit Comment</ModalHeader>
                 
                 <ModalBody>
                     <LocalForm onSubmit={(values) => {this.HandleSubmit(values)}}>
@@ -78,7 +78,7 @@ class CommentForm extends Component{
                                 messages={{
                                     required: "Required",
                                     minLength: "Must be greater than 2 char",
-                                    maxLength: "Must be Less thab 16 char"
+                                    maxLength: "Must be 15 characters or less"
                                 }}
                                 ></Errors>
                                 </Col>
