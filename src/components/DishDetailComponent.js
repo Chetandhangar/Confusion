@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Card, CardImg, CardBody, CardText, CardTitle ,Breadcrumb, BreadcrumbItem, Modal ,ModalHeader , Label ,ModalBody,Button, Row, Col} from 'reactstrap';
 import {LocalForm , Control , Errors} from 'react-redux-form'
 import  { Link } from 'react-router-dom';
+import  { Loading } from './LoadingComponent'; 
 
 const required = (val) => val && val.length;
 const minLength = (len) => (val) => !(val) || (val.length > len);
@@ -27,8 +28,7 @@ class CommentForm extends Component{
     }
 
     HandleSubmit(values){
-        console.log("current state is :" + JSON.stringify(values));
-        alert("current state is: " + JSON.stringify(values));
+       this.props.addComment(this.props.dishId , values.rating, values.author , values.comment )
     }
 
     render(){
@@ -68,7 +68,7 @@ class CommentForm extends Component{
                                 <Control.text model=".author" id="author" name="author" className="control-form"
                                 className="col-12 col-md-10"
                                 validators={{
-                                    required , minLength: minLength(3), maxLength: maxLength(15)
+                                    required , minLength: minLength(2), maxLength: maxLength(15)
                                 }}
                                 />
                                 <Errors
@@ -131,7 +131,7 @@ class CommentForm extends Component{
     
     }
 
-    function RenderComments({comments}) {
+    function RenderComments({comments, addComment, dishId}) {
        if (comments != null)
         return(
                <div className='col-12 col-md-5 ml-1'>
@@ -142,7 +142,7 @@ class CommentForm extends Component{
                            return(
                                <li key={comment.id}>
                                    <p>{comment.comment}</p>
-                                   <p>~~ {comment.author}</p>
+                                   <p>~~ {comment.author},{new Intl.DateTimeFormat('en-us' , {year: 'numeric', month: 'short' ,day: '2-digit'}).format(new Date(Date.parse(comment.date)))}</p>
 
                                </li>
                            );
@@ -151,7 +151,7 @@ class CommentForm extends Component{
                        }
                         </ul>
                         
-                  <CommentForm />
+                  <CommentForm dishId={dishId} addComment={addComment}/>
                </div> 
            );
                        else
@@ -161,7 +161,25 @@ class CommentForm extends Component{
                     }   
 
                 const DishDetail = (props) => {
-                    if(props.dish !=null)
+                    if(props.isLoading){
+                        return(
+                            <div className="container">
+                                <div className="row">
+                                    <Loading />
+                                </div>
+                            </div>
+                        );
+                    }
+                    else if(props.errMess){
+                        return(
+                            <div className="container">
+                                <div className="row">
+                                    <h4>{props.errMess}</h4>
+                                </div>
+                            </div>
+                        );
+                    }
+                    else if(props.dish !=null)
                     return (
                         <div class="container">
                             <div className="row">
@@ -176,7 +194,10 @@ class CommentForm extends Component{
                                 </div>
                                 <div className="row">
                                     <RenderDish dish={props.dish} />
-                                    <RenderComments comments={props.comments} />
+                                    <RenderComments comments={props.comments} 
+                                    addComment={props.addComment}
+                                    dishId={props.dish.id}
+                                    />
                                 </div>
                            
                         </div>

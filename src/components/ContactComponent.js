@@ -18,16 +18,16 @@ class Contact extends Component {
 
        
 
-        this.HandelSubmit = this.HandelSubmit.bind(this);
+        this.handelSubmit = this.handelSubmit.bind(this);
 
     }
 
     
    
 
-    HandelSubmit(values){
-        console.log("Current State is: " + JSON.stringify(values));
-        alert("Current state is: " + JSON.stringify(values));
+    handelSubmit(values){
+        console.log('Current State is: ' + JSON.stringify(values));
+        alert('Current state is: ' + JSON.stringify(values));
     
     }
 
@@ -82,8 +82,9 @@ class Contact extends Component {
             <div className="col-12">
                 <h3>Send Your Feedback</h3>
             </div>
+
             <div className="col-12 col-md-9">
-            <LocalForm onSubmit={(values) => this.HandelSubmit(values)}>
+            <LocalForm onSubmit={(values) => this.handelSubmit(values)}>
                 <Row className="form-group">
                 <Label htmlFor="firstname" md={2}>Fitst Name</Label>
                 <Col md={10}>
@@ -211,7 +212,7 @@ class Contact extends Component {
                
                 <Row className="form-group">
                     <Col md={{size: 10 , offset: 2}}> 
-                    <Button type="submit" color="primary">submit</Button>
+                    <Button type="submit" color="primary">Submit</Button>
                     </Col>
                 </Row>
 
