@@ -10,6 +10,7 @@ import Home from './HomeComponent';
 import {connect} from 'react-redux';
 import { postComment, fetchDishes, fetchComments , fetchPromos } from '../redux/ActionCreaters'; 
 import { actions } from 'react-redux-form';
+import { TransitionGroup, CSSTransition} from 'react-transition-group';
 
 const mapStateToProps = state => {
   return{
@@ -72,15 +73,20 @@ constructor(props){
   return (
     <div>
       <Head />
-      <Switch>
+      <TransitionGroup>
+          <CSSTransition  key={this.props.location.key} classNames="page" timeout={3000}>
+      <Switch location={this.props.location}>
         <Route path="/home" component={HomePage}></Route>
         <Route exact path="/menu" component={ () =><Menu dishes={this.props.dishes} />}></Route>
         <Route path='/menu/:dishId' component={DishWithId} />
         <Route exact path='/contactus' component={() => <Contact resetFeedbackForm={this.props.resetFeedbackForm} />} />
         <Route exact apth="/aboutus" component={() => <About leaders={this.props.leaders} />}></Route>
-        <Redirect to="/home" ></Redirect>
+        <Redirect to="/home" ></Redirect> 
       </Switch>
+      </CSSTransition>
+        </TransitionGroup>
       <Footer />
+     
     </div>
   );
   }
