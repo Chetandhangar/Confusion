@@ -1,6 +1,6 @@
 import React ,{ Component } from 'react';
 import {Breadcrumb, BreadcrumbItem, Form, Button, Label, Col, Row} from 'reactstrap';
-import { LocalForm , Control , Errors } from 'react-redux-form';
+import { Control,Errors, actions } from 'react-redux-form';
 import { Link } from 'react-router-dom';
 
 
@@ -18,18 +18,20 @@ class Contact extends Component {
 
        
 
-        this.handelSubmit = this.handelSubmit.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
 
     }
 
     
    
 
-    handelSubmit(values){
+    handleSubmit(values) {
         console.log('Current State is: ' + JSON.stringify(values));
-        alert('Current state is: ' + JSON.stringify(values));
-    
+        alert('Current State is: ' + JSON.stringify(values));
+        this.props.resetFeedbackForm();
+        // event.preventDefault();
     }
+
 
     
     
@@ -84,7 +86,8 @@ class Contact extends Component {
             </div>
 
             <div className="col-12 col-md-9">
-            <LocalForm onSubmit={(values) => this.handelSubmit(values)}>
+            <Form model="feedback" onSubmit={(values) => this.handleSubmit(values)}>
+                          
                 <Row className="form-group">
                 <Label htmlFor="firstname" md={2}>Fitst Name</Label>
                 <Col md={10}>
@@ -212,11 +215,11 @@ class Contact extends Component {
                
                 <Row className="form-group">
                     <Col md={{size: 10 , offset: 2}}> 
-                    <Button type="submit" color="primary">Submit</Button>
+                    <Button type="submit" color="primary">Send Feedback</Button>
                     </Col>
                 </Row>
 
-            </LocalForm>
+                </Form>
             </div>
         </div>
     </div>
