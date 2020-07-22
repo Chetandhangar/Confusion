@@ -158,7 +158,6 @@ class CommentForm extends Component{
                                </Fade>
                            );
                        })
-                        
                        }
                        </Stagger>
                         </ul>
