@@ -7,8 +7,9 @@ import Contact from './ContactComponent';
 import About from './AboutComponent';
 import Footer from './FooterComponent';
 import Home from './HomeComponent';
+import Favorites from './FavoriteComponent';
 import {connect} from 'react-redux';
-import { postComment, fetchDishes, fetchComments , fetchPromos , fetchLeaders, postFeedback} from '../redux/ActionCreaters'; 
+import { postComment, fetchDishes, fetchComments , fetchPromos , fetchLeaders, postFeedback,loginUser, logoutUser, fetchFavorites, googleLogin, postFavorite, deleteFavorite } from '../redux/ActionCreaters'; 
 import { actions } from 'react-redux-form';
 import { TransitionGroup, CSSTransition} from 'react-transition-group';
 
@@ -17,7 +18,9 @@ const mapStateToProps = state => {
     dishes: state.dishes,
     comments: state.comments,
     promotions: state.promotions,
-    leaders: state.leaders
+    leaders: state.leaders,
+    favorites : state.favorites,
+    auth : state.auth
 }
 }
 
@@ -28,14 +31,13 @@ const mapDispatchToProps = dispatch =>({
   fetchComments: () => { dispatch(fetchComments())},
   fetchPromos: () => { dispatch(fetchPromos())},
   fetchLeaders: () => {dispatch(fetchLeaders())},
-  postFeedback: (   firstname,lastname,telnum,email,agree,contactType,message) => {dispatch(postFeedback(   firstname,
-      lastname,
-      telnum,
-      email,
-      agree,
-      contactType,
-      message))}
-
+  postFeedback: (feedback) => {dispatch(postFeedback(feedback))},
+  loginUser: (creds) => dispatch(loginUser(creds)),
+  logoutUser: () => dispatch(logoutUser()),
+  fetchFavorites: () => dispatch(fetchFavorites()),
+  googleLogin: () => dispatch(googleLogin()),
+  postFavorite: (dishId) => dispatch(postFavorite(dishId)),
+  deleteFavorite: (dishId) => dispatch(deleteFavorite(dishId))
 });
 
 
@@ -50,8 +52,12 @@ constructor(props){
     this.props.fetchComments();
     this.props.fetchPromos();
     this.props.fetchLeaders();
+    this.props.fetchFavorites();
   }
   
+  componentWillUnmount() {
+    this.props.logoutUser();
+  }
 
   
   render(){
@@ -72,31 +78,61 @@ constructor(props){
 
     const DishWithId = ({match}) => {
       return(
-          <DishDetail dish={this.props.dishes.dishes.filter((dish) => dish.id === parseInt(match.params.dishId,10))[0]}
-                      isLoading={this.props.dishes.isLoading}
-                      errMess={this.props.dishes.errMess}
-                      comments={this.props.comments.comments.filter((comment) => comment.dishId === parseInt(match.params.dishId,10))}
-                      commentsErrMess={this.props.comments.errMess}
-                      postComment={this.props.postComment}
-             />
-      );
+          (this.props.auth.isAuthenticated && this.props.favorites.favorites)
+          ?
+          <DishDetail dish={this.props.dishes.dishes.filter((dish) => dish._id === match.params.dishId)[0]}
+            isLoading={this.props.dishes.isLoading}
+            errMess={this.props.dishes.errMess}
+            comments={this.props.comments.comments.filter((comment) => comment.dish === match.params.dishId)}
+            commentsErrMess={this.props.comments.errMess}
+            postComment={this.props.postComment}
+            favorite={this.props.favorites.favorites.dishes.some((dish) => dish === match.params.dishId)}
+            postFavorite={this.props.postFavorite}
+            />
+          :
+          <DishDetail dish={this.props.dishes.dishes.filter((dish) => dish._id === match.params.dishId)[0]}
+            isLoading={this.props.dishes.isLoading}
+            errMess={this.props.dishes.errMess}
+            comments={this.props.comments.comments.filter((comment) => comment.dish === match.params.dishId)}
+            commentsErrMess={this.props.comments.errMess}
+            postComment={this.props.postComment}
+            favorite={false}
+            postFavorite={this.props.postFavorite}
+            />
+        );
     };
+
+    const PrivateRoute = ({ component: Component, ...rest }) => (
+      <Route {...rest} render={(props) => (
+        this.props.auth.isAuthenticated
+          ? <Component {...props} />
+          : <Redirect to={{
+              pathname: '/home',
+              state: { from: props.location }
+            }} />
+      )} />
+    );
 
   return (
     <div>
-      <Head />
-      <TransitionGroup>
-          <CSSTransition  key={this.props.location.key} classNames="page" timeout={3000}>
-      <Switch location={this.props.location}>
-        <Route path="/home" component={HomePage}></Route>
-        <Route exact path="/menu" component={ () =><Menu dishes={this.props.dishes} />}></Route>
-        <Route path='/menu/:dishId' component={DishWithId} />
-        <Route exact path='/contactus' component={() => <Contact resetFeedbackForm={this.props.resetFeedbackForm}
-                                                                postFeedback={this.props.postFeedback} />} />
-        <Route exact apth="/aboutus" component={() => <About leaders={this.props.leaders} />}></Route>
-        <Redirect to="/home" ></Redirect> 
-      </Switch>
-      </CSSTransition>
+      <Head 
+      auth={this.props.auth} 
+      loginUser={this.props.loginUser} 
+      logoutUser={this.props.logoutUser}
+      googleLogin={this.props.googleLogin}
+      />
+       <TransitionGroup>
+          <CSSTransition key={this.props.location.key} classNames="page" timeout={300}>
+            <Switch>
+              <Route path="/home" component={HomePage} />
+              <Route exact path='/aboutus' component={() => <About leaders={this.props.leaders} />} />
+              <Route exact path="/menu" component={() => <Menu dishes={this.props.dishes} />} />
+              <Route path="/menu/:dishId" component={DishWithId} />
+              <PrivateRoute exact path="/favorites" component={() => <Favorites favorites={this.props.favorites} dishes={this.props.dishes} deleteFavorite={this.props.deleteFavorite} />} />
+              <Route exact path="/contactus" component={() => <Contact resetFeedbackForm={this.props.resetFeedbackForm} postFeedback={this.props.postFeedback} />} />
+              <Redirect to="/home" />
+            </Switch>
+          </CSSTransition>
         </TransitionGroup>
       <Footer />
      
